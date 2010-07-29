@@ -691,9 +691,9 @@ namespace Brunet
         }
         NumberSerializer.WriteInt(to_send.LocalID, buffer, 0);
         NumberSerializer.WriteInt(to_send.RemoteID, buffer, 4);
-        int length = to_send.Data.CopyTo(buffer, 8);
 
         try {
+          int length = to_send.Data.CopyTo(buffer, 8);
           _s.SendTo(buffer, 8 + length, SocketFlags.None, to_send.Dst);
         } catch(SocketException x) {
           if((1 == _running) && ProtocolLog.UdpEdge.Enabled) {
