@@ -137,6 +137,7 @@ namespace Brunet
          */
         /* EdgeListener's */
         _edgelistener_list = new ArrayList();
+        _co_list = new List<ConnectionOverlord>();
         _edge_factory = new EdgeFactory();
         _ta_discovery = ImmutableList<Discovery>.Empty;
         StateChangeEvent += HandleTADiscoveryState;
@@ -314,6 +315,9 @@ namespace Brunet
         return (ArrayList) _edgelistener_list.Clone();
       }
     }
+
+    /// List of ConnectionOverlords managed by this node
+    protected List<ConnectionOverlord> _co_list;
 
     /**
      * These are all the local TransportAddress objects that
@@ -550,6 +554,11 @@ namespace Brunet
       };
     }
 
+    public virtual void AddConnectionOverlord(ConnectionOverlord co)
+    {
+      _co_list.Add(co);
+    }
+
     /// <summary>Add a TA discovery agent.</summary>
     public virtual void AddTADiscovery(Discovery disc)
     {
@@ -770,7 +779,15 @@ namespace Brunet
 
         el.Start();
       }
+
       Interlocked.Exchange(ref _running, 1);
+    }
+
+    protected virtual void StartConnectionOverlords() {
+      foreach(ConnectionOverlord co in _co_list) {
+        co.Start();
+        co.Activate();
+      }
     }
 
     /**
@@ -806,6 +823,12 @@ namespace Brunet
           }
           _check_edges.TryCancel();
         }
+      }
+    }
+
+    protected virtual void StopConnectionOverlords() {
+      foreach(ConnectionOverlord co in _co_list) {
+        co.Stop();
       }
     }
 
