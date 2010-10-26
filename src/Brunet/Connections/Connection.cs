@@ -34,6 +34,7 @@ using Brunet.Transport;
 using Brunet.Concurrent;
 using Brunet.Collections;
 using BM = Brunet.Messaging;
+using Brunet.Util;
 
 namespace Brunet.Connections {
 
