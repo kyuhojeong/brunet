@@ -33,7 +33,7 @@
     </copy>
   </target>
 
-  <target name="nunit_test" description="Builds nunit testable Brunet.dll">
+  <target name="test" description="Builds nunit testable Brunet.dll">
 	  <mkdir dir="${build.dir}" failonerror="true"/>
 
     <copy todir="${build.dir}">

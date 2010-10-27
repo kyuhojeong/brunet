@@ -12,6 +12,7 @@
     <nant buildfile="src/Brunet/Services/Dht/default.build" />
     <nant buildfile="src/Brunet/Services/Coordinate/default.build" />
     <nant buildfile="src/Brunet/Services/XmlRpc/default.build" />
+    <nant buildfile="src/Brunet/Services/Deetoo/default.build" />
     <nant buildfile="src/Brunet/Security/default.build" />
     <nant buildfile="src/Brunet/Xmpp/default.build" />
     <nant buildfile="src/Brunet/Applications/default.build" />
@@ -46,6 +47,7 @@
     <call target="build" />
     <nant target="test" buildfile="src/Brunet/Services/Dht/default.build" failonerror="false" />
     <nant target="test" buildfile="src/Brunet/Services/Coordinate/default.build" failonerror="false" />
+    <nant target="test" buildfile="src/Brunet/Services/Deetoo/default.build" failonerror="false" />
     <nant target="test" buildfile="src/Brunet/default.build" failonerror="false" />
     <nant target="test" buildfile="src/Brunet/Security/default.build" failonerror="false" />
     <nant target="test" buildfile="src/Ipop/default.build" />
