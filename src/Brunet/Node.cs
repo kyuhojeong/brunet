@@ -122,8 +122,10 @@ namespace Brunet
         _connection_table.DisconnectionEvent += this.CheckForStateChange;
         _connection_table.StatusChangedEvent += this.CheckForStateChange;
 
+#if !BRUNET_SIMULATOR
         _codeinjection = new Brunet.Services.CodeInjection(this);
         _codeinjection.LoadLocalModules();
+#endif
         /*
          * We must later make sure the EdgeEvent events from
          * any EdgeListeners are connected to _cph.EdgeHandler
