@@ -613,10 +613,6 @@ namespace Brunet.Symphony {
         int responses)
     {
       Connector con = GetConnector(sender, target, contype, _node.Address.ToString());
-      if(con == null) {
-        return;
-      }
-
       lock( _sync ) {
         _connectors[con] = responses;
       }
