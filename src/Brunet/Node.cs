@@ -258,6 +258,9 @@ namespace Brunet
 // End of inner classes
 /////
 
+#if BRUNET_SIMULATOR
+    public static Random SimulatorRandom = new Random();
+#endif
     public delegate bool EdgeVerifier(Node node, Edge e, Address addr);
     public EdgeVerifier EdgeVerifyMethod;
 

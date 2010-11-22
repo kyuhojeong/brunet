@@ -561,7 +561,11 @@ namespace Brunet.Connections
 
     public ConnectionTable(Address local)
     {
+#if BRUNET_SIMULATOR
+      _rand = Node.SimulatorRandom;
+#else
       _rand = new Random();
+#endif
 
       _sync = new Object();
       lock( _sync ) {
