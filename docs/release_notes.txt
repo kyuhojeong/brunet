@@ -1,4 +1,14 @@
 ===============================================================================
+Revision 9.5.6
+-------------------------------------------------------------------------------
+- NCService could have been memory leaking due to exceptions
+- FuzzyTimer could create excessive timers
+- Added a NAT testing suite
+- Code should use less memory due to better caching
+- Merged ManagedCO and OnDemandCO
+- OnDemand wasn't properly closing
+- Many improvements for the Simulator
+===============================================================================
 Revision 9.5.5
 -------------------------------------------------------------------------------
 - OnDemand will only close a connection if the node created it, the token
