@@ -716,7 +716,7 @@ namespace Brunet.Transport
      */
     public void HandleEdgeSend(Edge from, ICopyable p) {
       if(_send_queue.Count > 1024) {
-        Console.WriteLine("Send queue too big: " + _send_queue.Count);
+//        Console.WriteLine("Send queue too big: " + _send_queue.Count);
         // This may be causing the memory leak ... not certain
         return;
 //        throw new EdgeException(true, "Could not send on: " + from);
