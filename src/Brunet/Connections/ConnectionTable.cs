@@ -687,9 +687,6 @@ namespace Brunet.Connections
         // rethrow the exception
         throw;
       }
-      if(ProtocolLog.Stats.Enabled)
-        ProtocolLog.Write(ProtocolLog.Stats, String.Format(
-          "New Connection {0}|{1}", c, DateTime.UtcNow.Ticks));
     }
 
     /**
@@ -1039,10 +1036,6 @@ namespace Brunet.Connections
           
           if( add_unconnected ) {
             _unconnected = Functional.Add(_unconnected, e);
-            if(ProtocolLog.Stats.Enabled) {
-              ProtocolLog.Write(ProtocolLog.Stats, String.Format(
-                "Intermediate add to unconnected {0}|{1}", e, DateTime.UtcNow.Ticks));
-            }
           }
         }
         else if( !add_unconnected ) {
@@ -1051,10 +1044,6 @@ namespace Brunet.Connections
           int idx = _unconnected.IndexOf(e);
           if( idx >= 0 ) {
             _unconnected = Functional.RemoveAt(_unconnected, idx);
-          }
-          if(ProtocolLog.Stats.Enabled) {
-            ProtocolLog.Write(ProtocolLog.Stats, String.Format(
-              "Edge removed from unconnected {0}|{1}", e, DateTime.UtcNow.Ticks));
           }
         }
         view = _view++;
@@ -1066,11 +1055,6 @@ namespace Brunet.Connections
           ProtocolLog.Write(ProtocolLog.Connections,
             String.Format("New Disconnection[{0}]: {1}, instant: {2}, con_life: {3} ", 
 			                    index, c, now, con_life));
-        }
-
-        if(ProtocolLog.Stats.Enabled) {
-          ProtocolLog.Write(ProtocolLog.Stats, String.Format(
-            "Disconnection {0}|{1}", c, DateTime.UtcNow.Ticks));
         }
 
         //Announce the disconnection:
@@ -1244,10 +1228,6 @@ namespace Brunet.Connections
      */
     public void AddUnconnected(Edge e)
     {
-      if(ProtocolLog.Stats.Enabled) {
-        ProtocolLog.Write(ProtocolLog.Stats, String.Format(
-          "Initial add to unconnected {0}|{1}", e, DateTime.UtcNow.Ticks));
-      }
       lock( _sync ) {
         if( _closed ) { throw new TableClosedException(); }
         Connection c = GetConnection(e);

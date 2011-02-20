@@ -116,9 +116,15 @@ namespace Brunet.Connections
        * close edges that have been there for some time
        */
       Connection c = tab.GetConnection(from);
-      if(ProtocolLog.LinkDebug.Enabled)
-        ProtocolLog.Write(ProtocolLog.LinkDebug, String.Format(
-          "sys:link.Close on {0} connection: {1}", from, c));
+      if(ProtocolLog.Connections.Enabled) {
+        String reason = String.Empty;
+        if(close_message.Contains(reason)) {
+          reason = (String) close_message["reason"];
+        }
+        ProtocolLog.Write(ProtocolLog.Connections, String.Format(
+                          "sys:link.Close on {0} connection: {1}, reason: {2}",
+                          from, c, reason));
+      }
       tab.Disconnect(from);
       /** 
        * Release locks when the close message arrives; do not wait
@@ -126,14 +132,6 @@ namespace Brunet.Connections
        */
       CloseHandler(from, null);
 
-      if(ProtocolLog.EdgeClose.Enabled) {
-        String reason = String.Empty;
-        if(close_message.Contains(reason)) {
-          reason = (String) close_message["reason"];
-        }
-        ProtocolLog.Write(ProtocolLog.EdgeClose, String.Format(
-                          "sys:link.Close - " + from + ": " + reason));
-      }
       /**
        * Try to close the edge after a small time span:
        */
@@ -399,9 +397,10 @@ namespace Brunet.Connections
      * This just echos back the object passed to it
      */
     public object Ping(object o, ISender edge) {
-      if(ProtocolLog.LinkDebug.Enabled)
-        ProtocolLog.Write(ProtocolLog.LinkDebug, String.Format(
+      if(ProtocolLog.NodeLog.Enabled) {
+        ProtocolLog.Write(ProtocolLog.NodeLog, String.Format(
           "{0} sys:link.Ping({1},{2})", _node.Address,o,edge));
+      }
       return o;
     }
 

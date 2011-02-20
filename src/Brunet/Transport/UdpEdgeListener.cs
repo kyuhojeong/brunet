@@ -87,6 +87,7 @@ namespace Brunet.Transport
     protected readonly object _sync;
     protected readonly ManualResetEvent _listen_finished_event;
     protected int _running;
+    protected FuzzyEvent _monitor_fe;
     protected int _isstarted;
     public override bool IsStarted
     {
@@ -106,7 +107,8 @@ namespace Brunet.Transport
     {
       EdgeClosed = 1,
       EdgeDataAnnounce = 2, ///Send a dictionary of various data about the edge
-      Null = 3 ///This is a null message, it means just ignore the packet
+      Null = 3, ///This is a null message, it means just ignore the packet
+      Log = 4 /// Print a log
     }
 
     override public TAAuthorizer TAAuth {
@@ -194,8 +196,24 @@ namespace Brunet.Transport
      * by UDP
      */
     protected void HandleControlPacket(int remoteid, int n_localid,
-                                       MemBlock buffer, object state)
+                                       MemBlock buffer, EndPoint ep) 
     {
+      ControlCode code = 0;
+      try {
+        code = (ControlCode)NumberSerializer.ReadInt(buffer, 0);
+      } catch (Exception x) {
+        ProtocolLog.WriteIf(ProtocolLog.Exceptions, x.ToString());
+      }
+
+      if(code == ControlCode.Log) {
+        IPEndPoint ipep = ep as IPEndPoint;
+        if(IPAddress.IsLoopback(ipep.Address)) {
+          ProtocolLog.Write(ProtocolLog.Monitor,
+              String.Format("I am alive: {0}", DateTime.UtcNow));
+        }
+        return;
+      }
+
       int local_id = ~n_localid;
       UdpEdge e = _id_ht[local_id] as UdpEdge;
       if(e == null) {
@@ -215,7 +233,6 @@ namespace Brunet.Transport
       }
 
       try {
-        ControlCode code = (ControlCode)NumberSerializer.ReadInt(buffer, 0);
         if(ProtocolLog.UdpEdge.Enabled)
           ProtocolLog.Write(ProtocolLog.UdpEdge, String.Format(
             "Got control {1} from: {0}", e, code));
@@ -254,9 +271,7 @@ namespace Brunet.Transport
         }
       }
       catch(Exception x) {
-      //This could happen if this is some control message we don't understand
-        if(ProtocolLog.Exceptions.Enabled)
-          ProtocolLog.Write(ProtocolLog.Exceptions, x.ToString());
+        ProtocolLog.WriteIf(ProtocolLog.Exceptions, x.ToString());
       }
     }
 
@@ -634,25 +649,50 @@ namespace Brunet.Transport
      * This is the only thread that can touch the socket,
      * therefore, we do not need to lock the socket.
      */
+
+    protected void MonitorLogOff()
+    {
+      Util.FuzzyEvent fe = _monitor_fe;
+      _monitor_fe = null;
+      if(fe != null) {
+        fe.TryCancel();
+      }
+    }
+
+    protected void MonitorLogSwitch()
+    {
+      if(_running == 0) {
+        MonitorLogOff();
+        return;
+      }
+
+      if(ProtocolLog.Monitor.Enabled) {
+        EndPoint ep = new IPEndPoint(IPAddress.Loopback, _port);
+        Action<DateTime> log_todo = delegate(DateTime dt) {
+          SendControlPacket(ep, 0, 0, ControlCode.Log, null);
+        };
+        int millisec_timeout = 5000; //log every 5 seconds.
+        Util.FuzzyEvent fe = Brunet.Util.FuzzyTimer.Instance.DoEvery(log_todo,
+            millisec_timeout, millisec_timeout/2);
+        if(Interlocked.CompareExchange(ref _monitor_fe, fe, null) != null) {
+          fe.TryCancel();
+        }
+      }
+
+      if(_running == 0 || !ProtocolLog.Monitor.Enabled) {
+        MonitorLogOff();
+      }
+    }
+
     protected void ListenThread()
     {
       Thread.CurrentThread.Name = "udp_listen_thread";
       BufferAllocator ba = new BufferAllocator(8 + Int16.MaxValue);
       EndPoint end = new IPEndPoint(IPAddress.Any, 0);
-
-      DateTime last_debug = DateTime.UtcNow;
-      int debug_period = 5000;
-      bool logging = ProtocolLog.Monitor.Enabled;
       int rec_bytes = 0;
-      while(1 == _running) {
-        if(logging) {
-          DateTime now = DateTime.UtcNow;
-          if(last_debug.AddMilliseconds(debug_period) < now) {
-            last_debug = now;
-            ProtocolLog.Write(ProtocolLog.Monitor, String.Format("I am alive: {0}", now));
-          }
-        }
+      ProtocolLog.Monitor.SwitchedSetting += MonitorLogSwitch;
 
+      while(1 == _running) {
         int max = ba.Capacity;
         try {
           rec_bytes = _s.ReceiveFrom(ba.Buffer, ba.Offset, max,
@@ -675,11 +715,12 @@ namespace Brunet.Transport
 
         if( localid < 0 ) {
           // Negative ids are control messages
-          HandleControlPacket(remoteid, localid, packet_buffer, null);
+          HandleControlPacket(remoteid, localid, packet_buffer, end);
         } else {
           HandleDataPacket(remoteid, localid, packet_buffer, end, null);
         }
       }
+      ProtocolLog.Monitor.SwitchedSetting -= MonitorLogSwitch;
       //Let everyone know we are out of the loop
       _listen_finished_event.Set();
       _s.Close();
@@ -704,8 +745,12 @@ namespace Brunet.Transport
           int length = to_send.Data.CopyTo(buffer, 8);
           _s.SendTo(buffer, 8 + length, SocketFlags.None, to_send.Dst);
         } catch(SocketException x) {
-          if((1 == _running) && ProtocolLog.UdpEdge.Enabled) {
-            ProtocolLog.Write(ProtocolLog.UdpEdge, x.ToString());
+          if(1 == _running) {
+            ProtocolLog.WriteIf(ProtocolLog.UdpEdge, x.ToString());
+          }
+        } catch(Exception x) {
+          if(1 == _running) {
+            ProtocolLog.WriteIf(ProtocolLog.Exceptions, x.ToString());
           }
         }
       }
@@ -716,7 +761,8 @@ namespace Brunet.Transport
      */
     public void HandleEdgeSend(Edge from, ICopyable p) {
       if(_send_queue.Count > 1024) {
-//        Console.WriteLine("Send queue too big: " + _send_queue.Count);
+        ProtocolLog.WriteIf(ProtocolLog.Exceptions,
+            "Send queue too big: " + _send_queue.Count);
         // This may be causing the memory leak ... not certain
         return;
 //        throw new EdgeException(true, "Could not send on: " + from);

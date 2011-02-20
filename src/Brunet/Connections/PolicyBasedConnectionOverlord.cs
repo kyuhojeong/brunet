@@ -147,7 +147,7 @@ namespace Brunet.Connections {
           return;
         }
 
-        ProtocolLog.WriteIf(ProtocolLog.OnDemandCO, "Retrying: " + addr);
+        ProtocolLog.WriteIf(ProtocolLog.PolicyBasedCO, "Retrying: " + addr);
         ConnectTo(addr);
       };
 
@@ -177,7 +177,7 @@ namespace Brunet.Connections {
           return;
         }
 
-        ProtocolLog.WriteIf(ProtocolLog.OnDemandCO, "Closing: " + con);
+        ProtocolLog.WriteIf(ProtocolLog.PolicyBasedCO, "Closing: " + con);
         _node.GracefullyClose(con.Edge, "Closed by request of CO");
       };
       FuzzyTimer.Instance.DoAfter(callback, 60000, 500);
