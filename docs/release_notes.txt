@@ -1,4 +1,12 @@
 ===============================================================================
+Revision 9.5.8
+-------------------------------------------------------------------------------
+- Logging can be enabled via RPC
+- Dynamic send queue for UdpEL
+- Proper use of TryGetValue for OnDemandCO -- guarantees proper behavior
+- Removed exceptions from TimeBasedCache
+- Switched print of Send queue message to logging message
+===============================================================================
 Revision 9.5.7
 -------------------------------------------------------------------------------
 - Caught RpcManager.Invoke exceptions due to uncaught ReqrepManager.SendRequest
