@@ -46,6 +46,8 @@ namespace Brunet.Transport
    */
   public class UdpEdgeListener : EdgeListener, IEdgeSendHandler
   {
+    protected int _send_queue_max;
+    protected readonly int _send_queue_delta = 64;
     protected long _bytes = 0;
     public override long BytesSent { get { return _bytes; } }
 
@@ -148,6 +150,7 @@ namespace Brunet.Transport
       lock( _id_ht ) {
         if( _id_ht.Contains( e.ID ) ) {
           _id_ht.Remove( e.ID );
+          _send_queue_max -= _send_queue_delta;
           object re = _remote_id_ht[ e.RemoteID ];
           if( re == e ) {
             //_remote_id_ht only keeps track of incoming edges,
@@ -336,6 +339,7 @@ namespace Brunet.Transport
               IPEndPoint this_end = (IPEndPoint)end;
               IPEndPoint my_end = new IPEndPoint(this_end.Address,
                                                  this_end.Port);
+              _send_queue_max += _send_queue_delta;
               edge = new UdpEdge(_send_handler, true, my_end,
                              _local_ep, localid, remoteid);
               _id_ht[localid] = edge;
@@ -473,6 +477,7 @@ namespace Brunet.Transport
 	    //Make sure we don't have negative ids
             if( id < 0 ) { id = ~id; }
           } while( _id_ht.Contains(id) || id == 0 );
+          _send_queue_max += _send_queue_delta;
           e = new UdpEdge(this, false, end, _local_ep, id, 0);
           _id_ht[id] = e;
         }
@@ -760,7 +765,7 @@ namespace Brunet.Transport
      * When UdpEdge objects call Send, it calls this packet callback:
      */
     public void HandleEdgeSend(Edge from, ICopyable p) {
-      if(_send_queue.Count > 1024) {
+      if(_send_queue.Count > _send_queue_max) {
         ProtocolLog.WriteIf(ProtocolLog.Exceptions,
             "Send queue too big: " + _send_queue.Count);
         // This may be causing the memory leak ... not certain
