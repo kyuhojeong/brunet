@@ -1,4 +1,9 @@
 ===============================================================================
+Revision 9.5.10
+-------------------------------------------------------------------------------
+- PolicyBasedCO was spinning on ConnectorEndHandler
+- PeerSecAssociation was clearing out dhe messages for no good reason
+===============================================================================
 Revision 9.5.9
 -------------------------------------------------------------------------------
 - IPOP has the ability to enable logging via RPC
