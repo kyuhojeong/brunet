@@ -412,22 +412,10 @@ namespace Brunet.Security.PeerSec {
       return true;
     }
 
-    /// <summary>For some reason we failed during a security exchange.  Since
-    /// we only close in the case of Waiting and not Update, we don't call Close
-    /// we call this.</summary>
+    /// <summary>For some reason we failed during a security exchange.</summary>
     public void Failure()
     {
-      bool close = false;
-      lock(_sync) {
-        if(State == States.Updating) {
-          UpdateState(States.Updating, States.Active);
-        }
-
-        if(State != States.Active) {
-          close = true;
-        }
-      }
-      if(close) {
+      if(State != States.Active) {
         Close("Failed, probably due to timeout");
       }
     }
