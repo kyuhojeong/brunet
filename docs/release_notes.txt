@@ -1,4 +1,14 @@
 ===============================================================================
+Revision 9.5.12
+-------------------------------------------------------------------------------
+- Improved Security logging
+- Added debugging scripts
+- Fixed a bug with the restarting of GroupVPN, it wasn't properly loading
+  stored DHT contents
+- Security cookies for AHSenders are based upon P2P address
+- Reduced the number of unhandled exceptions in Security
+- Rewrote Reseting of the Security state
+===============================================================================
 Revision 9.5.11
 -------------------------------------------------------------------------------
 - Security was leaving stale states and peers weren't reconnecting...
