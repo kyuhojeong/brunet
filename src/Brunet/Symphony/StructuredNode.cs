@@ -61,6 +61,7 @@ namespace Brunet.Symphony
     //maximum number of neighbors we report in our status
     protected static readonly int MAX_NEIGHBORS = 4;
     public ConnectionPacketHandler sys_link;
+    public readonly AHHandler AHHandler;
 
     public override bool IsConnected {
       get {
@@ -90,8 +91,8 @@ namespace Brunet.Symphony
        */
       /// Turn on Packet Forwarding Support :
       GetTypeSource(PType.Protocol.Forwarding).Subscribe(new PacketForwarder(this), null);
-      //Handles AHRouting:
-      GetTypeSource(PType.Protocol.AH).Subscribe(new AHHandler(this), this);
+      AHHandler = new AHHandler(this);
+      GetTypeSource(PType.Protocol.AH).Subscribe(AHHandler, this);
       GetTypeSource(PType.Protocol.Echo).Subscribe(new EchoHandler(), this);
       
       //Add the standard RPC handlers:
