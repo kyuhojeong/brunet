@@ -502,7 +502,7 @@ namespace Brunet
           tmp_node.AddEdgeListener(new UdpEdgeListener(port+loop));
           break;
         case "function":
-          tmp_node.AddEdgeListener(new FunctionEdgeListener(port+loop));
+          tmp_node.AddEdgeListener(new FunctionEdgeListener(port+loop, 0, null));
           break;
         case "path":
           if( pem == null ) {
@@ -527,6 +527,7 @@ namespace Brunet
         default:
           throw new Exception("Unknown net type: " + net_type);
       }
+      var remote_tas = new List<TransportAddress>();
       //tmp_node.AddEdgeListener(new FunctionEdgeListener(port+loop));
       for (int loop2=0;loop2<net_size;loop2++) {
         if (loop == loop2) {
@@ -554,9 +555,9 @@ namespace Brunet
             throw new Exception("Unknown net type: " + net_type);
         }
         ta_str = ta_str + other_port.ToString();
-        TransportAddress this_ta = TransportAddressFactory.CreateInstance(ta_str);
-        tmp_node.RemoteTAs.Add(this_ta);
+        remote_tas.Add(TransportAddressFactory.CreateInstance(ta_str));
       }
+      tmp_node.RemoteTAs = remote_tas;
     }
     
     //This logs the changes in connection table
