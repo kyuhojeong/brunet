@@ -1,4 +1,11 @@
 ===============================================================================
+Revision 9.5.13
+-------------------------------------------------------------------------------
+- Removed AHSender -> Node -> AHHandler, now AHSender -> AHHandler
+  (performance enhancement)
+- Bug in GroupVPN contents if file didn't exist
+- Improved logging for deadlocks in Node
+===============================================================================
 Revision 9.5.12
 -------------------------------------------------------------------------------
 - Improved Security logging
