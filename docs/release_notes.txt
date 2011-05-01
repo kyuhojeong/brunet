@@ -1,4 +1,10 @@
 ===============================================================================
+Revision 9.5.17
+-------------------------------------------------------------------------------
+- Security could start the same SA many times, creating significant overhead
+- UdpEL wasn't checking if the Monitor log was enabled during startup
+- Added some Simulator Tasks for connection watching
+===============================================================================
 Revision 9.5.16
 -------------------------------------------------------------------------------
 - Fixed a race condition in the GroupVPN script
