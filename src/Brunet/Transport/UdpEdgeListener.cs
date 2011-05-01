@@ -695,6 +695,7 @@ namespace Brunet.Transport
       BufferAllocator ba = new BufferAllocator(8 + Int16.MaxValue);
       EndPoint end = new IPEndPoint(IPAddress.Any, 0);
       int rec_bytes = 0;
+      MonitorLogSwitch();
       ProtocolLog.Monitor.SwitchedSetting += MonitorLogSwitch;
 
       while(1 == _running) {
