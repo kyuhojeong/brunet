@@ -115,7 +115,7 @@ namespace Brunet.Connections {
                             "Connection: {0} at {1}", con, DateTime.UtcNow));
         }
       } else if(con.ConType.Equals(Type)) {
-        DelayedRemove(con.Address);
+        DelayedRemove(con.Address, "Undesired");
       }
     }
 
@@ -130,7 +130,7 @@ namespace Brunet.Connections {
     /// connection.</summary>
     protected void HandleEviction(object sender, TimeBasedCache<Address, bool>.EvictionArgs ea)
     {
-      DelayedRemove(ea.Key);
+      DelayedRemove(ea.Key, "No longer needed");
     }
   }
 }
