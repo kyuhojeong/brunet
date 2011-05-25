@@ -1,4 +1,12 @@
 ===============================================================================
+Revision 9.5.19
+-------------------------------------------------------------------------------
+- OnDemand is triggered for incoming and outgoing messages
+- SymphonySecurity wasn't properly sharing secure AHSender (overlay sender)
+- ConnectionHandler which behaves similar to AHSender but only routes through
+  PtP senders, guaranteeing better performance and simpler behavior
+- Added ConnectionHandler to IPOP
+===============================================================================
 Revision 9.5.18
 -------------------------------------------------------------------------------
 - Reformated a statement so GroupVPN would be started on Nimus
