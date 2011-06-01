@@ -61,6 +61,10 @@ namespace Brunet.Security.PeerSec.Symphony {
       if(sa == null) {
         return null;
       }
+      Address addr = _so.GetAddress(sa);
+      if(addr == null) {
+        addr = base.SenderToAddress(sa.Sender);
+      }
       return _so.GetAddress(sa);
     }
 
