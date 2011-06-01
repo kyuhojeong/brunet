@@ -1,4 +1,11 @@
 ===============================================================================
+Revision 9.5.20
+-------------------------------------------------------------------------------
+- ConnectionHandler has a more robust handling of ISender -> Address
+- ConnectionHandler shouldn't use Edges for compatibility with old IPOP code
+- OnDemand calls set on an undesired connection instead of close, it helps
+  with Condor stability
+===============================================================================
 Revision 9.5.19
 -------------------------------------------------------------------------------
 - OnDemand is triggered for incoming and outgoing messages
