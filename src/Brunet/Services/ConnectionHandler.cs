@@ -124,10 +124,14 @@ namespace Brunet.Services {
     virtual protected Address SenderToAddress(ISender sender)
     {
       Connection con = _node.ConnectionTable.GetConnection(sender as Edge);
-      if(con == null) {
-        return null;
+      if(con != null) {
+        return con.Address;
       }
-      return con.Address;
+      AHSender ahs = sender as AHSender;
+      if(ahs != null) {
+        return ahs.Destination;
+      }
+      return null;
     }
 
     ///<summary>Try to find a sender, if it exists, add to the dictionaries</summary>
@@ -139,8 +143,8 @@ namespace Brunet.Services {
         sender = null;
         return false;
       }
-      AddConnection(con.Address, con.Edge);
-      sender = con.Edge;
+      sender = new AHGreedySender(_node, con.Address);
+      AddConnection(con.Address, sender);
       return true;
     }
 
@@ -151,7 +155,10 @@ namespace Brunet.Services {
   
     virtual protected void ValidDisconnection(Connection con)
     {
-      RemoveConnection(con.Address, con.Edge);
+      ISender sender = null;
+      if(_address_to_sender.TryGetValue(con.Address, out sender)) {
+        RemoveConnection(con.Address, _address_to_sender[con.Address]);
+      }
     }
 
     /// <summary>Add to the dictionaries!</summary>
