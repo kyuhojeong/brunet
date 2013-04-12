@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<project name="Openflow Controller" default="PacketQueueController" basedir=".">
+	<description> Openflow Controller </description>
+	<property name="build.dir" value="build"/>
+	<property name="lib.dir" value="../../lib"/>
+	<target name="clean" description="Remove build directory">
+		<delete file="${build.dir}/Controller.exe" failonerror="true"/>
+		<delete file="${build.dir}/NDesk.Options.dll" failonerror="true"/>
+	</target>
+	<target name="PacketQueueController" description="build control plane">
+		<mkdir dir="${build.dir}" failonerror="true"/>
+		<copy todir="${build.dir}" failonerror="true">
+			<fileset basedir="${lib.dir}">
+				<include name="NDesk.Options.dll" />
+			</fileset>
+		</copy>
+		<csc target="exe" output="${build.dir}/UnixSocketIPCController.exe" main="Openflow.UnixSocketIPCController" optimize="true" unsafe="true">
+			<sources failonempty="true">
+				<include name="UnixSocketIPCController.cs"/>
+				<include name="Controller.cs"/>
+				<include name="Flow.cs"/>
+				<include name="SocketConnection.cs"/>
+				<include name="Protocol.cs"/>
+				<include name="MacLearning.cs"/>
+			</sources>
+			<references basedir="${build.dir}"> 
+				<include name="NDesk.Options.dll"/>
+				<include name="Mono.Posix.dll"/>
+			</references>
+		</csc>
+	</target>
+	<target name="controller" description="Build Controller">
+		<mkdir dir="${build.dir}" failonerror="true"/>
+		<copy todir="${build.dir}" failonerror="true">
+			<fileset basedir="${lib.dir}">
+				<include name="NDesk.Options.dll" />
+			</fileset>
+		</copy>
+		<csc target="exe" output="${build.dir}/Controller.exe" main="Openflow.Controller" optimize="true" unsafe="true">
+			<sources failonempty="true">
+				<include name="Controller.cs"/>
+				<include name="Flow.cs"/>
+				<include name="SocketConnection.cs"/>
+				<include name="Protocol.cs"/>
+				<include name="MacLearning.cs"/>
+			</sources>
+			<references basedir="${build.dir}"> 
+				<include name="NDesk.Options.dll"/>
+				<include name="Mono.Posix.dll"/>
+			</references>
+		</csc>
+	</target>
+</project>

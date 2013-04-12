@@ -6,7 +6,18 @@
   <property name="bin.dir" value="${root}/bin"/>
   <property name="build.dir" value="build" />
   <target name="clean" description="Remove build directory">
-    <delete dir="${build.dir}" failonerror="true"/>
+    <delete file="${build.dir}/Brunet.dll" failonerror="true"/>
+    <delete file="${build.dir}/Brunet.Services.Coordinate.dll" failonerror="true"/>
+    <delete file="${build.dir}/Brunet.Services.XmlRpc.dll" failonerror="true"/>
+    <delete file="${build.dir}/CookComputing.XmlRpcV2.dll" failonerror="true"/>
+    <delete file="${build.dir}/jabber-net.dll" failonerror="true"/>
+    <delete file="${build.dir}/Mono.Security.dll" failonerror="true"/>
+    <delete file="${build.dir}/Brunet.Security.dll" failonerror="true"/>
+    <delete file="${build.dir}/Brunet.Services.Dht.dll" failonerror="true"/>
+    <delete file="${build.dir}/Brunet.Xmpp.dll" failonerror="true"/>
+    <delete file="${build.dir}/DhtIpopNode.exe" failonerror="true"/>
+    <delete file="${build.dir}/ManagedOpenSsl.dll" failonerror="true"/>
+    <delete file="${build.dir}/NDesk.Options.dll" failonerror="true"/>
   </target>
   <target name="build" description="Build DhtIpopNode.exe">
     <mkdir dir="${build.dir}" failonerror="true"/>

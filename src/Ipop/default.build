@@ -13,7 +13,6 @@
     <nant buildfile="Managed/default.build" />
     <nant buildfile="SocialVPN/default.build" />
   </target>
-
   <target name="test" description="Build IpopNode.Test.dll">
     <mkdir dir="${build.dir}" failonerror="true"/>
     <copy todir="${build.dir}" failonerror="true">
